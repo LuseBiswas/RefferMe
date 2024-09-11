@@ -46,7 +46,7 @@ Use http://localhost:5600/api/auth/login
 
 Method: GET
 
-URL: http://localhost:5000/api/protected-route
+URL: http://localhost:5600/api/profile
 
 Headers:
 

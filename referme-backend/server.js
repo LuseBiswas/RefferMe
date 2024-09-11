@@ -7,6 +7,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 
 import userRoutes from './routes/userRoutes.js';
+import jobRoutes from './routes/jobRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(morgan('dev'));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api', userRoutes); // Use the user routes
+app.use('/api/jobs', jobRoutes);//Job Routes
 
 
 // Start the server
