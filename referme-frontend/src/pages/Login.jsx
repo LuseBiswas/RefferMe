@@ -1,37 +1,48 @@
 // src/pages/Login.jsx
-import React, { useContext, useState } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
 
 const Login = () => {
-  const { login } = useContext(AuthContext);
-  const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { loginUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(credentials);
+    const result = await loginUser(email, password);
+
+    if (result.success) {
+      setError('');
+      navigate('/dashboard'); // Redirect to dashboard page after successful login
+    } else {
+      setError(result.message);
+    }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+    <div>
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
         <input
           type="email"
           placeholder="Email"
-          value={credentials.email}
-          onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-          className="p-2 border border-gray-300 rounded"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
           type="password"
           placeholder="Password"
-          value={credentials.password}
-          onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-          className="p-2 border border-gray-300 rounded"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
         />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-          Login
-        </button>
+        <button type="submit">Login</button>
       </form>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };
