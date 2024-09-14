@@ -22,6 +22,17 @@ export const getJobs = async (req, res) => {
   }
 };
 
+// Get a specific job by ID
+export const getJobById = async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id).populate('postedBy', 'name email');
+    if (!job) return res.status(404).json({ message: 'Job not found' });
+    res.status(200).json(job);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching job details', error });
+  }
+};
+
 // Update a job posting
 export const updateJob = async (req, res) => {
   try {

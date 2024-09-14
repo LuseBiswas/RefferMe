@@ -1,13 +1,23 @@
 // routes/jobRoutes.js
 import express from 'express';
-import { createJob, getJobs, updateJob, deleteJob } from '../controllers/jobController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
+import { createJob, getJobs, getJobById, updateJob, deleteJob } from '../controllers/jobController.js';
 
 const router = express.Router();
 
-router.post('/', authMiddleware, createJob); // Create a new job posting
-router.get('/', getJobs); // Get all job postings
-router.put('/:id', authMiddleware, updateJob); // Update a job posting
-router.delete('/:id', authMiddleware, deleteJob); // Delete a job posting
+// Create a new job
+router.post('/jobs', authMiddleware, createJob);
+
+// Get all jobs
+router.get('/jobs', getJobs);
+
+// Get a specific job by ID
+router.get('/jobs/:id', getJobById);
+
+// Update a job by ID
+router.put('/jobs/:id', authMiddleware, updateJob);
+
+// Delete a job by ID
+router.delete('/jobs/:id', authMiddleware, deleteJob);
 
 export default router;

@@ -7,6 +7,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import JobListings from './pages/JobListings';
 import Dashboard from './pages/Dashboard';
+import JobList from './components/JobList';
+import JobForm from './components/JobForm';
 
 const App = () => {
   return (
@@ -19,6 +21,9 @@ const App = () => {
         <Route path="/job-listings" element={<JobListings />} />
         {/*<Route path="/referral-requests" element={<ReferralRequests />} />*/}
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/jobs" element={<JobList />} />
+        <Route path="/jobs/new" element={<JobForm />} />
+        
 
         </Routes>
       </Router>

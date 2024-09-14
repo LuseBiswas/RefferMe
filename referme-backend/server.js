@@ -27,7 +27,7 @@ app.use(morgan('dev'));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api', userRoutes); // Use the user routes
-app.use('/api/jobs', jobRoutes);//Job Routes
+app.use('/api', jobRoutes);//Job Routes
 app.use('/api/referrals', referralRoutes); // Mount referral routes
 
 
