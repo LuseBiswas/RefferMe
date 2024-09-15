@@ -30,6 +30,16 @@ const jobSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
+
+  applications: [
+    {
+      name: { type: String, required: true },
+      phoneNumber: { type: String, required: true },
+      email: { type: String, required: true },
+      linkedinID: { type: String, required: true },
+      resumeURL: { type: String, required: true }
+    }
+  ]
 });
 
 const Job = mongoose.model('Job', jobSchema);

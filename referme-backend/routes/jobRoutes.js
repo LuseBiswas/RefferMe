@@ -1,6 +1,7 @@
 import express from 'express';
 import authMiddleware from '../middlewares/authMiddleware.js';
-import { createJob, getJobs, getJobsByUser, getJobById, updateJob, deleteJob } from '../controllers/jobController.js';
+import { createJob, getJobs, getJobsByUser, getJobById, updateJob, deleteJob, applyForJob } from '../controllers/jobController.js';
+import upload from '../mutlerUpload.js';
 
 const router = express.Router();
 
@@ -21,5 +22,8 @@ router.put('/jobs/:id', authMiddleware, updateJob);
 
 // Delete a job by ID
 router.delete('/jobs/:id', authMiddleware, deleteJob);
+
+// routes/jobRoutes.js
+router.post('/jobs/:id/apply', authMiddleware, upload.single('resume'), applyForJob);
 
 export default router;

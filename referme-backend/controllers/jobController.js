@@ -80,3 +80,33 @@ export const getJobsByUser = async (req, res) => {
   }
 };
 
+
+//Apply for Job
+export const applyForJob = async (req, res) => {
+  try {
+    const { name, phoneNumber, email, linkedinID } = req.body;
+    const resumeURL = req.file.path;
+    const job = await Job.findById(req.params.id);
+    const user = req.user;
+
+    if (!job) return res.status(404).json({ message: 'Job not found' });
+
+    job.applications.push({
+      name,
+      phoneNumber,
+      email,
+      linkedinID,
+      resumeURL
+    });
+
+    user.appliedJobs.push({ jobId: job._id });
+
+    await job.save();
+    await user.save();
+
+    res.status(200).json({ message: 'Application submitted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error applying for job', error });
+  }
+};
+

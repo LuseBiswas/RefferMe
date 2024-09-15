@@ -13,7 +13,15 @@ const userSchema = new mongoose.Schema({
   },
   ratings: { type: Number, default: 0 },
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
-}, { timestamps: true });
+
+  appliedJobs: [
+    {
+      jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' }
+    }
+  ]
+}, { timestamps: true }
+
+);
 
 const User = mongoose.model('User', userSchema);
 
