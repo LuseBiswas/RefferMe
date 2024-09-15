@@ -11,19 +11,19 @@ const authMiddleware = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Decoded Token:', decoded);
-
-    // Use 'id' if that's the key in the token
+    
+    // Fetch the user using the decoded ID
     const user = await User.findById(decoded.id);
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Attach user object to the request
     req.user = user;
     next();
   } catch (err) {
-    console.error('Token Error:', err);
-    res.status(401).json({ message: 'Invalid token' });
+    res.status(401).json({ message: 'Invalid token', error: err.message });
   }
 };
 

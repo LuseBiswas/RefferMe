@@ -5,10 +5,10 @@ import { AuthProvider } from './context/AuthContext';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import JobListings from './pages/JobListings';
 import Dashboard from './pages/Dashboard';
-import JobList from './components/JobList';
 import JobForm from './components/JobForm';
+import JobListing from './pages/JobListing';
+import ViewAllJobs from './pages/ViewAllJobs';
 
 const App = () => {
   return (
@@ -18,11 +18,13 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-        <Route path="/job-listings" element={<JobListings />} />
+    
         {/*<Route path="/referral-requests" element={<ReferralRequests />} />*/}
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/jobs" element={<JobList />} />
-        <Route path="/jobs/new" element={<JobForm />} />
+        <Route path="/view-jobs" element={<JobListing />} />
+        <Route path="/create-job" element={<JobForm />} />
+        <Route path="/all-jobs" element={<ViewAllJobs />} />
+
         
 
         </Routes>

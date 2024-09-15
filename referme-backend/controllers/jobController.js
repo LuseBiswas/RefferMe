@@ -54,3 +54,29 @@ export const deleteJob = async (req, res) => {
     res.status(500).json({ message: 'Error deleting job posting', error });
   }
 };
+
+
+// controllers/jobController.js
+export const getJobsByUser = async (req, res) => {
+  try {
+    // Ensure req.user._id is a valid ObjectId
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: 'Unauthorized: User not found' });
+    }
+
+    console.log('User ID:', req.user._id); // Check the value here
+
+    // Fetch jobs posted by the user
+    const jobs = await Job.find({ postedBy: req.user._id });
+
+    if (!jobs || jobs.length === 0) {
+      return res.status(404).json({ message: 'No jobs found for this user' });
+    }
+
+    res.status(200).json(jobs);
+  } catch (error) {
+    console.error('Error fetching jobs for user:', error);
+    res.status(500).json({ message: 'Error fetching job details', error });
+  }
+};
+

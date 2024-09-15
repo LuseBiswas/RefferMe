@@ -1,7 +1,6 @@
-// routes/jobRoutes.js
 import express from 'express';
 import authMiddleware from '../middlewares/authMiddleware.js';
-import { createJob, getJobs, getJobById, updateJob, deleteJob } from '../controllers/jobController.js';
+import { createJob, getJobs, getJobsByUser, getJobById, updateJob, deleteJob } from '../controllers/jobController.js';
 
 const router = express.Router();
 
@@ -10,6 +9,9 @@ router.post('/jobs', authMiddleware, createJob);
 
 // Get all jobs
 router.get('/jobs', getJobs);
+
+// Get jobs posted by the authenticated user
+router.get('/jobs/user', authMiddleware, getJobsByUser);  // Apply the authMiddleware here
 
 // Get a specific job by ID
 router.get('/jobs/:id', getJobById);
