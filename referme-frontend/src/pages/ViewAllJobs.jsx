@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Briefcase, MapPin, DollarSign, Building2, Loader2, AlertCircle, Edit, Trash2 } from 'lucide-react';
+import {
+  Briefcase, MapPin, DollarSign, Building2, Loader2, AlertCircle, Edit, Trash2,
+} from 'lucide-react';
 
 // Job Card Component
 const JobCard = ({ job, onUpdate, onDelete }) => (
@@ -59,8 +61,9 @@ const ViewAllJobs = () => {
     location: '',
     salary: '',
     requirements: '',
-    company: ''
+    company: '',
   });
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
 
   useEffect(() => {
     const fetchUserJobs = async () => {
@@ -68,9 +71,9 @@ const ViewAllJobs = () => {
         const token = localStorage.getItem('token');
         const response = await axios.get('http://localhost:5600/api/jobs/user', {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         });
         setJobs(response.data);
         setLoading(false);
@@ -91,24 +94,31 @@ const ViewAllJobs = () => {
       location: job.location,
       salary: job.salary,
       requirements: job.requirements.join(', '),
-      company: job.company
+      company: job.company,
     });
-    // Open a modal or navigate to an update page
   };
 
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic form validation
+    if (!updateFormData.title || !updateFormData.description || !updateFormData.location || !updateFormData.salary) {
+      setError('Please fill in all the required fields');
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       await axios.put(`http://localhost:5600/api/jobs/${selectedJob._id}`, updateFormData, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
       // Update the job in the state
-      setJobs(jobs.map(job => job._id === selectedJob._id ? { ...job, ...updateFormData } : job));
-      setSelectedJob(null);
+      setJobs(jobs.map((job) => (job._id === selectedJob._id ? { ...job, ...updateFormData } : job)));
+      setSelectedJob(null); // Close modal after successful update
+      setError(null); // Clear any existing errors
     } catch (err) {
       setError('Failed to update job');
     }
@@ -119,11 +129,13 @@ const ViewAllJobs = () => {
       const token = localStorage.getItem('token');
       await axios.delete(`http://localhost:5600/api/jobs/${jobId}`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
-      setJobs(jobs.filter(job => job._id !== jobId));
+      setJobs(jobs.filter((job) => job._id !== jobId));
+      setDeleteSuccess(true);
+      setTimeout(() => setDeleteSuccess(false), 3000); // Hide success message after 3 seconds
     } catch (err) {
       setError('Failed to delete job');
     }
@@ -151,33 +163,87 @@ const ViewAllJobs = () => {
         <Briefcase className="inline-block mr-2 mb-1" />
         My Posted Jobs
       </h1>
+
+      {deleteSuccess && (
+        <div className="mb-4 text-green-600 text-center">
+          Job deleted successfully!
+        </div>
+      )}
+
       {jobs.length === 0 ? (
         <p className="text-center text-gray-600">No jobs found.</p>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {jobs.map(job => (
-            <JobCard 
-              key={job._id} 
-              job={job} 
-              onUpdate={handleUpdate}
-              onDelete={handleDelete}
-            />
+          {jobs.map((job) => (
+            <JobCard key={job._id} job={job} onUpdate={handleUpdate} onDelete={handleDelete} />
           ))}
         </div>
       )}
+
       {selectedJob && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
             <h2 className="text-2xl font-bold mb-4">Update Job</h2>
             <form onSubmit={handleUpdateSubmit}>
-              <input type="text" name="title" placeholder="Job Title" value={updateFormData.title} onChange={(e) => setUpdateFormData({ ...updateFormData, title: e.target.value })} className="block w-full mb-2 p-2 border rounded" />
-              <input type="text" name="description" placeholder="Job Description" value={updateFormData.description} onChange={(e) => setUpdateFormData({ ...updateFormData, description: e.target.value })} className="block w-full mb-2 p-2 border rounded" />
-              <input type="text" name="location" placeholder="Job Location" value={updateFormData.location} onChange={(e) => setUpdateFormData({ ...updateFormData, location: e.target.value })} className="block w-full mb-2 p-2 border rounded" />
-              <input type="number" name="salary" placeholder="Salary" value={updateFormData.salary} onChange={(e) => setUpdateFormData({ ...updateFormData, salary: e.target.value })} className="block w-full mb-2 p-2 border rounded" />
-              <input type="text" name="requirements" placeholder="Requirements (comma-separated)" value={updateFormData.requirements} onChange={(e) => setUpdateFormData({ ...updateFormData, requirements: e.target.value.split(',').map(req => req.trim()) })} className="block w-full mb-2 p-2 border rounded" />
-              <input type="text" name="company" placeholder="Company Name" value={updateFormData.company} onChange={(e) => setUpdateFormData({ ...updateFormData, company: e.target.value })} className="block w-full mb-4 p-2 border rounded" />
-              <button type="submit" className="bg-blue-500 text-white p-2 rounded">Update Job</button>
-              <button type="button" onClick={() => setSelectedJob(null)} className="ml-4 p-2 rounded border">Cancel</button>
+              <input
+                type="text"
+                name="title"
+                placeholder="Job Title"
+                value={updateFormData.title}
+                onChange={(e) => setUpdateFormData({ ...updateFormData, title: e.target.value })}
+                className="block w-full mb-2 p-2 border rounded"
+                required
+              />
+              <input
+                type="text"
+                name="description"
+                placeholder="Job Description"
+                value={updateFormData.description}
+                onChange={(e) => setUpdateFormData({ ...updateFormData, description: e.target.value })}
+                className="block w-full mb-2 p-2 border rounded"
+                required
+              />
+              <input
+                type="text"
+                name="location"
+                placeholder="Job Location"
+                value={updateFormData.location}
+                onChange={(e) => setUpdateFormData({ ...updateFormData, location: e.target.value })}
+                className="block w-full mb-2 p-2 border rounded"
+                required
+              />
+              <input
+                type="number"
+                name="salary"
+                placeholder="Salary"
+                value={updateFormData.salary}
+                onChange={(e) => setUpdateFormData({ ...updateFormData, salary: e.target.value })}
+                className="block w-full mb-2 p-2 border rounded"
+                required
+              />
+              <input
+                type="text"
+                name="requirements"
+                placeholder="Requirements (comma-separated)"
+                value={updateFormData.requirements}
+                onChange={(e) =>
+                  setUpdateFormData({ ...updateFormData, requirements: e.target.value.split(',').map((req) => req.trim()) })}
+                className="block w-full mb-2 p-2 border rounded"
+              />
+              <input
+                type="text"
+                name="company"
+                placeholder="Company Name"
+                value={updateFormData.company}
+                onChange={(e) => setUpdateFormData({ ...updateFormData, company: e.target.value })}
+                className="block w-full mb-2 p-2 border rounded"
+              />
+              <div className="flex justify-between mt-4">
+                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
+                <button type="button" onClick={() => setSelectedJob(null)} className="bg-gray-500 text-white px-4 py-2 rounded">
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         </div>
